@@ -12,7 +12,7 @@ AutoConnectInput LED_intensity("LED", "", "intensity", "^[0-9]+$", " ", AC_Tag_B
 AutoConnectInput wifi_1("WIFI", "", "wifi", "^[A-Za-z]+$", " ", AC_Tag_BR, AC_Input_Text, "display: flex; justify-content: space-between; margin-bottom: 10px;");
 AutoConnectInput password("password", "", "pass", "^[0-9]+$", " ", AC_Tag_BR, AC_Input_Number, "display: flex; justify-content: space-between; margin-bottom: 10px;");
 AutoConnectSubmit submit("Submit", "Submit", "/submit", AC_Tag_BR);
-AutoConnectAux setting_update("/setting_update", "Data Controller", true,
+AutoConnectAux Data_Controller("/Data_Controller", "Data Controller", true,
                               {temp_increase,
                                LED_intensity,
                                wifi_1,
@@ -27,7 +27,7 @@ AutoConnectButton button("button", "LED", "", AC_Tag_BR);
 AutoConnectElement new_line(" ", " ", AC_Tag_BR);
 AutoConnectSubmit graph_submit("Graph", "Show Graph", "/show_graph", AC_Tag_BR);
 
-AutoConnectAux Submit1("/submit", "DATA SUBMITTED", false, {description, button, new_line});
+AutoConnectAux LED_PUSH("/submit", "DATA SUBMITTED", false, {description, button, new_line});
 
 String handleNameInput(AutoConnectAux &aux, PageArgument &args)
 {
@@ -52,8 +52,8 @@ void led_blink(AutoConnectButton &me, AutoConnectAux &ledOnOff)
 void auto_connect ::init()
 {
 
-  Portal.join({setting_update, Submit1});
-  Submit1.on(handleNameInput);
+  Portal.join({Data_Controller, LED_PUSH});
+  LED_PUSH.on(handleNameInput);
   button.on(led_blink);
   Config.reconnectInterval = 0;
 
@@ -69,4 +69,8 @@ void auto_connect ::init()
   {
     Serial.println("Failed to connect to WiFi.");
   }
+}
+void auto_connect ::loop()
+{
+  Portal.handleClient();
 }
